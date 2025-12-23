@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { BookOpen, Timer, Trophy, ChevronRight } from "lucide-react";
 
 export default function Home() {
@@ -42,6 +43,23 @@ export default function Home() {
         animate="animate"
         className="relative z-10 w-full max-w-5xl flex flex-col items-center"
       >
+        {/* --- Logo Section --- */}
+        <motion.div 
+          variants={fadeInUp}
+          className="mb-8 flex justify-center"
+        >
+          <div className="relative w-48 h-24 md:w-64 md:h-32">
+            <Image
+              src="/jaago.png"
+              alt="Jaago Logo"
+              fill
+              className="object-contain"
+              priority
+              sizes="(max-width: 768px) 192px, 256px"
+            />
+          </div>
+        </motion.div>
+
         {/* --- Header Section --- */}
         <motion.div variants={fadeInUp} className="text-center mb-12">
           <span className="px-4 py-1.5 rounded-full border border-black/10 bg-white/5 text-xs font-medium tracking-widest uppercase text-blue-400 mb-6 inline-block backdrop-blur-md">
