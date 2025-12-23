@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useGameStore } from "@/store/gameStore";
 import { INDIAN_STATES } from "@/data/constants";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mic, MicOff, User, MapPin, Sparkles } from "lucide-react";
 
-// Type definition for SpeechRecognition
+// --- (Keep existing SpeechRecognition TypeScript interfaces here) ---
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
@@ -56,6 +58,7 @@ declare global {
     };
   }
 }
+// --------------------------------------------------
 
 export default function InputPage() {
   const router = useRouter();
@@ -67,7 +70,7 @@ export default function InputPage() {
   const [isSpeechSupported, setIsSpeechSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  // Check if speech recognition is supported
+  // --- (Keep existing useEffect hooks for SpeechRecognition logic) ---
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -76,7 +79,6 @@ export default function InputPage() {
     }
   }, []);
 
-  // Initialize speech recognition
   useEffect(() => {
     if (isSpeechSupported && typeof window !== "undefined") {
       const SpeechRecognition =
@@ -90,10 +92,8 @@ export default function InputPage() {
         const transcript = event.results[0][0].transcript.trim();
         setName(transcript);
         setErrors((prev) => {
-          if (prev.name) {
-            return { ...prev, name: undefined };
-          }
-          return prev;
+            if (prev.name) return { ...prev, name: undefined };
+            return prev;
         });
         setIsListening(false);
       };
@@ -102,22 +102,13 @@ export default function InputPage() {
         console.error("Speech recognition error:", event.error);
         setIsListening(false);
         if (event.error === "no-speech") {
-          setErrors((prev) => ({
-            ...prev,
-            name: "No speech detected. Please try again.",
-          }));
+          setErrors((prev) => ({ ...prev, name: "No speech detected. Please try again." }));
         } else if (event.error === "not-allowed") {
-          setErrors((prev) => ({
-            ...prev,
-            name: "Microphone permission denied. Please allow microphone access.",
-          }));
+          setErrors((prev) => ({ ...prev, name: "Microphone access denied." }));
         }
       };
 
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
+      recognition.onend = () => { setIsListening(false); };
       recognitionRef.current = recognition;
     }
 
@@ -128,13 +119,11 @@ export default function InputPage() {
       }
     };
   }, [isSpeechSupported]);
+  // --------------------------------------------------
 
   const handleVoiceInput = () => {
     if (!isSpeechSupported) {
-      setErrors((prev) => ({
-        ...prev,
-        name: "Voice input is not supported in your browser.",
-      }));
+      setErrors((prev) => ({ ...prev, name: "Voice input not supported." }));
       return;
     }
 
@@ -147,9 +136,7 @@ export default function InputPage() {
           recognitionRef.current.start();
           setIsListening(true);
           setErrors((prev) => {
-            if (prev.name) {
-              return { ...prev, name: undefined };
-            }
+            if (prev.name) return { ...prev, name: undefined };
             return prev;
           });
         } catch (error) {
@@ -162,14 +149,8 @@ export default function InputPage() {
 
   const handleStart = () => {
     const newErrors: { name?: string; region?: string } = {};
-
-    if (!name || name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!region) {
-      newErrors.region = "Please select your region";
-    }
+    if (!name || name.trim().length < 2) newErrors.name = "Name must be at least 2 characters";
+    if (!region) newErrors.region = "Please select your region";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -181,129 +162,172 @@ export default function InputPage() {
     router.push("/countdown");
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md glass-effect rounded-2xl shadow-xl p-8 space-y-6">
-        <h1 className="text-4xl font-bold text-center text-church-dark mb-2">
-          Verse Order
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Arrange Bible verses in the correct order
-        </p>
+  const isFormValid = name.trim().length >= 2 && region;
 
-        <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Player Name
-            </label>
-            <div className="relative">
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  if (errors.name) setErrors({ ...errors, name: undefined });
-                }}
-                className="w-full px-4 py-3 pr-14 rounded-lg border-2 border-gray-300 focus:border-church-blue focus:outline-none text-lg touch-target"
-                placeholder="Enter your name or use voice input"
-                maxLength={50}
-              />
-              {isSpeechSupported && (
-                <button
-                  type="button"
-                  onClick={handleVoiceInput}
-                  className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all touch-target ${
-                    isListening
-                      ? "bg-red-500 text-white animate-pulse"
-                      : "bg-church-blue text-white hover:bg-blue-600 active:bg-blue-700"
-                  }`}
-                  aria-label={isListening ? "Stop recording" : "Start voice input"}
-                  title={isListening ? "Stop recording" : "Use voice input"}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0a0a0c] text-white">
+       {/* --- Visual Backdrop Elements (Consistent with Landing) --- */}
+       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-700/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-700/10 rounded-full blur-[120px]"></div>
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNTQgNDhVNjBINTJVNDhINDVWNDZINTVWMzRINTRWMzZINjZWMzZINTVWNDhaIiBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuNCIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+')]"></div>
+      </div>
+
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full max-w-md"
+      >
+        {/* Decorative glowing border */}
+        <div className="absolute -inset-0.5 bg-gradient-to-b from-blue-500/30 to-purple-600/30 rounded-[2.5rem] blur-md opacity-50"></div>
+
+        <div className="relative glass-effect rounded-[2rem] border border-white/10 bg-black/95 backdrop-blur-2xl p-8 md:p-10 space-y-8 shadow-2xl overflow-hidden">
+           {/* Top Shine */}
+           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+              Profile Setup
+            </h1>
+            <p className="text-gray-400 flex items-center justify-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              Prepare for the challenge
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            {/* Name Input Group */}
+            <div className="space-y-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 ml-1">
+                Player Name
+              </label>
+              <div className={`relative flex items-center group rounded-2xl transition-all duration-300 ${isListening ? 'ring-2 ring-red-500/50' : 'focus-within:ring-2 focus-within:ring-blue-500/50'}`}>
+                <User className="absolute left-4 h-5 w-5 text-blue-400 group-focus-within:text-blue-300 transition-colors" />
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  readOnly
+                  className="w-full pl-12 pr-16 py-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:bg-white/10 transition-all outline-none text-lg font-medium cursor-default"
+                  placeholder="Use voice input to enter name..."
+                  maxLength={50}
+                />
+                
+                {/* Voice Input Trigger */}
+                {isSpeechSupported && (
+                  <button
+                    type="button"
+                    onClick={handleVoiceInput}
+                    className={`absolute right-2 p-3 rounded-xl transition-all duration-300 backdrop-blur-md
+                      ${isListening 
+                        ? "bg-red-500/80 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]" 
+                        : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-white"
+                      }`}
+                    title={isListening ? "Stop recording" : "Use voice input"}
                   >
-                    {isListening ? (
-                      <>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                   <AnimatePresence mode="wait">
+                        {isListening ? (
+                            <motion.div key="mic-off" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                                <MicOff className="h-5 w-5" />
+                            </motion.div>
+                        ) : (
+                            <motion.div key="mic-on" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                                <Mic className="h-5 w-5" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                  </button>
+                )}
+              </div>
+
+              {/* Error / Listening Status Messages */}
+              <AnimatePresence mode="wait">
+                {isListening ? (
+                  <motion.p key="listening" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-sm text-red-400 font-medium flex items-center gap-2 ml-1">
+                     <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                     </span>
+                     Listening... Speak clearly
+                  </motion.p>
+                ) : errors.name ? (
+                  <motion.p key="error" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-red-400 ml-1">
+                    {errors.name}
+                  </motion.p>
+                ) : null}
+              </AnimatePresence>
+            </div>
+
+            {/* Region Select Group */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-300 ml-1 flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-purple-400" />
+                Region (State)
+              </label>
+              
+              {/* State Cards Grid */}
+              <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+                <div className="grid grid-cols-2 gap-2">
+                  {INDIAN_STATES.map((state) => (
+                    <motion.button
+                      key={state}
+                      type="button"
+                      onClick={() => {
+                        setRegion(state);
+                        if (errors.region) setErrors({ ...errors, region: undefined });
+                      }}
+                      className={`relative p-3 rounded-xl border-2 transition-all duration-200 text-left touch-target
+                        ${
+                          region === state
+                            ? "border-purple-500 bg-purple-500/20 text-white shadow-lg shadow-purple-500/20"
+                            : "border-white/10 bg-white/5 text-gray-300 hover:border-purple-500/50 hover:bg-white/10"
+                        }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="text-sm font-medium block truncate">{state}</span>
+                      {region === state && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute top-1 right-1 w-2 h-2 bg-purple-500 rounded-full"
                         />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-                        />
-                      </>
-                    ) : (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                      />
-                    )}
-                  </svg>
-                </button>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+              
+              {errors.region && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -10 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  className="text-sm text-red-400 ml-1"
+                >
+                  {errors.region}
+                </motion.p>
               )}
             </div>
-            {isListening && (
-              <p className="mt-1 text-sm text-church-blue font-medium animate-pulse">
-                🎤 Listening... Speak your name now
-              </p>
-            )}
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-            )}
-          </div>
 
-          <div>
-            <label
-              htmlFor="region"
-              className="block text-sm font-medium text-gray-700 mb-2"
+            {/* Start Button */}
+            <button
+              onClick={handleStart}
+              disabled={!isFormValid}
+              className={`relative w-full group py-4 rounded-xl font-bold text-xl overflow-hidden transition-all duration-300
+                ${isFormValid 
+                    ? 'bg-white text-black hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]' 
+                    : 'bg-white/10 text-gray-500 cursor-not-allowed'
+                }`}
             >
-              Region (Indian State)
-            </label>
-            <select
-              id="region"
-              value={region}
-              onChange={(e) => {
-                setRegion(e.target.value);
-                if (errors.region) setErrors({ ...errors, region: undefined });
-              }}
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-church-blue focus:outline-none text-lg touch-target bg-white"
-            >
-              <option value="">Select your state</option>
-              {INDIAN_STATES.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-            {errors.region && (
-              <p className="mt-1 text-sm text-red-600">{errors.region}</p>
-            )}
+              {isFormValid && (
+                 <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shine"></div>
+              )}
+              Start Game
+            </button>
           </div>
-
-          <button
-            onClick={handleStart}
-            disabled={!name.trim() || name.trim().length < 2 || !region}
-            className="w-full py-4 bg-church-blue text-white rounded-lg font-semibold text-lg shadow-lg hover:bg-blue-600 active:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors touch-target"
-          >
-            Start Game
-          </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
-

@@ -4,12 +4,21 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-blue-50 via-white to-amber-50 text-gray-900;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    /* Deep dark background with a slight radial tint */
+    background: radial-gradient(circle at center, #111116 0%, #0a0a0c 100%);
+    @apply text-white antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Custom Scrollbar for a premium feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
   }
 }
 
@@ -17,9 +26,35 @@
   .touch-target {
     @apply min-w-[44px] min-h-[44px];
   }
-  
+
+  /* Sophisticated Glassmorphism */
   .glass-effect {
-    @apply bg-white/80 backdrop-blur-sm;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  /* Text balance for cleaner headings */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Custom scrollbar for state cards */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
   }
 }
 
+/* Selection color to match the theme */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: #fff;
+}
