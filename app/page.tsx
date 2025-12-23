@@ -1,111 +1,82 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useGameStore } from "@/store/gameStore";
-import { INDIAN_STATES } from "@/data/constants";
 
 export default function Home() {
   const router = useRouter();
-  const { setPlayerData, resetGame } = useGameStore();
-  const [name, setName] = useState("");
-  const [region, setRegion] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; region?: string }>({});
 
-  const handleStart = () => {
-    const newErrors: { name?: string; region?: string } = {};
-
-    if (!name || name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!region) {
-      newErrors.region = "Please select your region";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    resetGame();
-    setPlayerData({ name: name.trim(), region });
-    router.push("/countdown");
+  const handleGetStarted = () => {
+    router.push("/input");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md glass-effect rounded-2xl shadow-xl p-8 space-y-6">
-        <h1 className="text-4xl font-bold text-center text-church-dark mb-2">
-          Verse Order
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-church-blue/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-church-gold/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-church-blue/5 rounded-full blur-2xl"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-4xl text-center space-y-8">
+        {/* Main Title */}
+        <div className="space-y-4 animate-fade-in">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-church-dark mb-4 leading-tight">
+            Verse Order
+          </h1>
+          <div className="w-32 h-1 bg-gradient-to-r from-transparent via-church-blue to-transparent mx-auto"></div>
+        </div>
+
+        {/* Subtitle */}
+        <p className="text-2xl md:text-3xl text-gray-700 font-light max-w-2xl mx-auto leading-relaxed">
           Arrange Bible verses in the correct order
         </p>
 
-        <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Player Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (errors.name) setErrors({ ...errors, name: undefined });
-              }}
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-church-blue focus:outline-none text-lg touch-target"
-              placeholder="Enter your name"
-              maxLength={50}
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-            )}
-          </div>
+        {/* Description */}
+        <div className="glass-effect rounded-2xl shadow-xl p-8 md:p-12 max-w-2xl mx-auto space-y-6">
+          <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+            Test your knowledge of Scripture by arranging scrambled Bible verse
+            fragments in their proper order. Challenge yourself across three
+            difficulty levels and compete on the leaderboard!
+          </p>
 
-          <div>
-            <label
-              htmlFor="region"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Region (Indian State)
-            </label>
-            <select
-              id="region"
-              value={region}
-              onChange={(e) => {
-                setRegion(e.target.value);
-                if (errors.region) setErrors({ ...errors, region: undefined });
-              }}
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-church-blue focus:outline-none text-lg touch-target bg-white"
-            >
-              <option value="">Select your state</option>
-              {INDIAN_STATES.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-            {errors.region && (
-              <p className="mt-1 text-sm text-red-600">{errors.region}</p>
-            )}
+          {/* Features */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <div className="space-y-2">
+              <div className="text-4xl mb-2">📖</div>
+              <h3 className="font-semibold text-church-dark">3 Levels</h3>
+              <p className="text-sm text-gray-600">
+                Easy, Medium, and Hard challenges
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl mb-2">⏱️</div>
+              <h3 className="font-semibold text-church-dark">30 Seconds</h3>
+              <p className="text-sm text-gray-600">Per level to complete</p>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl mb-2">🏆</div>
+              <h3 className="font-semibold text-church-dark">Leaderboard</h3>
+              <p className="text-sm text-gray-600">Compete with others</p>
+            </div>
           </div>
+        </div>
 
+        {/* CTA Button */}
+        <div className="pt-4">
           <button
-            onClick={handleStart}
-            disabled={!name.trim() || name.trim().length < 2 || !region}
-            className="w-full py-4 bg-church-blue text-white rounded-lg font-semibold text-lg shadow-lg hover:bg-blue-600 active:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors touch-target"
+            onClick={handleGetStarted}
+            className="px-12 py-5 bg-gradient-to-r from-church-blue to-blue-600 text-white rounded-xl font-bold text-xl shadow-2xl hover:shadow-3xl hover:scale-105 active:scale-100 transition-all duration-200 touch-target"
           >
-            Start Game
+            Get Started
           </button>
         </div>
+
+        {/* Additional Info */}
+        <p className="text-sm text-gray-500 mt-8">
+          Join the challenge and see how well you know God's Word
+        </p>
       </div>
     </div>
   );
 }
-
