@@ -44,7 +44,7 @@ export default function Home() {
       >
         {/* --- Header Section --- */}
         <motion.div variants={fadeInUp} className="text-center mb-12">
-          <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-medium tracking-widest uppercase text-blue-400 mb-6 inline-block backdrop-blur-md">
+          <span className="px-4 py-1.5 rounded-full border border-black/10 bg-white/5 text-xs font-medium tracking-widest uppercase text-blue-400 mb-6 inline-block backdrop-blur-md">
             The Ultimate Scripture Challenge
           </span>
           <h1 className="text-7xl md:text-9xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
@@ -63,7 +63,7 @@ export default function Home() {
           {/* Subtle Glow behind card */}
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
           
-          <div className="relative glass-effect rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-8 md:p-12 overflow-hidden">
+          <div className="relative glass-effect rounded-3xl border border-white/10 bg-black/95 backdrop-blur-2xl p-8 md:p-12 overflow-hidden">
             {/* Top Shine Effect */}
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
@@ -120,7 +120,7 @@ function FeatureItem({ icon, title, desc }: { icon: React.ReactNode, title: stri
         {icon}
       </div>
       <div>
-        <h3 className="font-bold text-white text-lg tracking-tight">{title}</h3>
+        <h3 className="font-bold text-black text-lg tracking-tight">{title}</h3>
         <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
       </div>
     </div>
