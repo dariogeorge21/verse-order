@@ -22,6 +22,8 @@ const config: Config = {
         "flash-green": "flashGreen 0.25s ease-in-out",
         "flash-red": "flashRed 0.25s ease-in-out",
         "countdown": "countdown 0.5s ease-out",
+        "shine": "shine 0.8s ease-in-out",
+        "pulse-slow": "pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       keyframes: {
         fadeIn: {
@@ -44,6 +46,9 @@ const config: Config = {
           "0%": { transform: "scale(0.5)", opacity: "0" },
           "50%": { transform: "scale(1.1)", opacity: "1" },
           "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        shine: {
+          "100%": { left: "125%" },
         },
       },
     },

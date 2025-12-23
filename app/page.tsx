@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { BookOpen, Timer, Trophy, ChevronRight } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -9,73 +11,117 @@ export default function Home() {
     router.push("/input");
   };
 
+  // Animation variants
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: "easeOut" }
+  };
+
+  const stagger = {
+    animate: { transition: { staggerChildren: 0.1 } }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative background elements */}
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#0a0a0c] text-white">
+      
+      {/* --- Visual Backdrop Elements --- */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-church-blue/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-church-gold/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-church-blue/5 rounded-full blur-2xl"></div>
+        {/* Animated Glossy Blobs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[120px]"></div>
+        
+        {/* Subtle Grid Pattern Overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" 
+             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 48L54 60L52 60L52 48L40 48L40 46L52 46L52 34L54 34L54 46L66 46L66 48L54 48Z' fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")` }}>
+        </div>
       </div>
 
-      <div className="relative z-10 w-full max-w-4xl text-center space-y-8">
-        {/* Main Title */}
-        <div className="space-y-4 animate-fade-in">
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-church-dark mb-4 leading-tight">
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        className="relative z-10 w-full max-w-5xl flex flex-col items-center"
+      >
+        {/* --- Header Section --- */}
+        <motion.div variants={fadeInUp} className="text-center mb-12">
+          <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-medium tracking-widest uppercase text-blue-400 mb-6 inline-block backdrop-blur-md">
+            The Ultimate Scripture Challenge
+          </span>
+          <h1 className="text-7xl md:text-9xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
             Verse Order
           </h1>
-          <div className="w-32 h-1 bg-gradient-to-r from-transparent via-church-blue to-transparent mx-auto"></div>
-        </div>
-
-        {/* Subtitle */}
-        <p className="text-2xl md:text-3xl text-gray-700 font-light max-w-2xl mx-auto leading-relaxed">
-          Arrange Bible verses in the correct order
-        </p>
-
-        {/* Description */}
-        <div className="glass-effect rounded-2xl shadow-xl p-8 md:p-12 max-w-2xl mx-auto space-y-6">
-          <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-            Test your knowledge of Scripture by arranging scrambled Bible verse
-            fragments in their proper order. Challenge yourself across three
-            difficulty levels and compete on the leaderboard!
+          <p className="text-lg md:text-2xl text-gray-400 font-light max-w-2xl mx-auto">
+            Bring clarity to the Word. Arrange scrambled fragments into perfect harmony.
           </p>
+        </motion.div>
 
-          {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div className="space-y-2">
-              <div className="text-4xl mb-2">📖</div>
-              <h3 className="font-semibold text-church-dark">3 Levels</h3>
-              <p className="text-sm text-gray-600">
-                Easy, Medium, and Hard challenges
-              </p>
-            </div>
-            <div className="space-y-2">
-              <div className="text-4xl mb-2">⏱️</div>
-              <h3 className="font-semibold text-church-dark">30 Seconds</h3>
-              <p className="text-sm text-gray-600">Per level to complete</p>
-            </div>
-            <div className="space-y-2">
-              <div className="text-4xl mb-2">🏆</div>
-              <h3 className="font-semibold text-church-dark">Leaderboard</h3>
-              <p className="text-sm text-gray-600">Compete with others</p>
-            </div>
+        {/* --- Main Glassmorphic Card --- */}
+        <motion.div 
+          variants={fadeInUp}
+          className="relative group w-full max-w-3xl"
+        >
+          {/* Subtle Glow behind card */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+          
+          <div className="relative glass-effect rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-8 md:p-12 overflow-hidden">
+            {/* Top Shine Effect */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+            <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+              <FeatureItem 
+                icon={<BookOpen className="w-6 h-6 text-blue-400" />} 
+                title="3 Levels" 
+                desc="From seeker to scholar" 
+              />
+              <FeatureItem 
+                icon={<Timer className="w-6 h-6 text-purple-400" />} 
+                title="30 Seconds" 
+                desc="Race against the clock" 
+              />
+              <FeatureItem 
+                icon={<Trophy className="w-6 h-6 text-amber-400" />} 
+                title="Leaderboard" 
+                desc="Compete for glory" 
+              />
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* CTA Button */}
-        <div className="pt-4">
+        {/* --- CTA Button --- */}
+        <motion.div variants={fadeInUp} className="mt-12 group">
           <button
             onClick={handleGetStarted}
-            className="px-12 py-5 bg-gradient-to-r from-church-blue to-blue-600 text-white rounded-xl font-bold text-xl shadow-2xl hover:shadow-3xl hover:scale-105 active:scale-100 transition-all duration-200 touch-target"
+            className="relative flex items-center gap-3 px-10 py-5 bg-white text-black rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95 overflow-hidden"
           >
+            {/* Glossy overlay on button */}
+            <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shine"></div>
+            
             Get Started
+            <ChevronRight className="w-6 h-6" />
           </button>
-        </div>
+        </motion.div>
 
-        {/* Additional Info */}
-        <p className="text-sm text-gray-500 mt-8">
-          Join the challenge and see how well you know God's Word
-        </p>
+        {/* --- Footer Info --- */}
+        <motion.p 
+          variants={fadeInUp}
+          className="text-sm text-gray-500 mt-12 tracking-wide uppercase"
+        >
+          Master the Scripture • Build your Legacy
+        </motion.p>
+      </motion.div>
+    </div>
+  );
+}
+
+function FeatureItem({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
+  return (
+    <div className="flex flex-col items-center text-center space-y-3 p-4 rounded-2xl transition-colors hover:bg-white/5">
+      <div className="p-4 rounded-2xl bg-white/5 border border-white/10 shadow-inner">
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-bold text-white text-lg tracking-tight">{title}</h3>
+        <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
       </div>
     </div>
   );
