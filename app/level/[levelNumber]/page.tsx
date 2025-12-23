@@ -12,6 +12,8 @@ import {
 import { calculateLevelScore } from "@/utils/scoring";
 import { FragmentDraggable } from "@/components/FragmentDraggable";
 import { LevelTimer } from "@/components/LevelTimer";
+import { motion, AnimatePresence } from "framer-motion";
+import { Hash, Layers, Trophy, CheckCircle2, AlertCircle } from "lucide-react";
 
 const LEVEL_TIME = 30;
 
@@ -32,14 +34,11 @@ export default function LevelPage() {
   const [selectedOrder, setSelectedOrder] = useState<Fragment[]>([]);
   const [timeRemaining, setTimeRemaining] = useState(LEVEL_TIME);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
-    null
-  );
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
   const [showFullReference, setShowFullReference] = useState(true);
   const [referenceOptions, setReferenceOptions] = useState<string[]>([]);
   const [selectedReference, setSelectedReference] = useState<string>("");
 
-  // Initialize level
   useEffect(() => {
     if (![1, 2, 3].includes(levelNumber)) {
       router.push("/");
@@ -47,36 +46,24 @@ export default function LevelPage() {
     }
 
     setCurrentLevel(levelNumber as 1 | 2 | 3);
-
-    // Get verse based on difficulty
-    const difficulty =
-      levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard";
+    const difficulty = levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard";
     const selectedVerse = getRandomVerse(difficulty);
     setVerse(selectedVerse);
     setCurrentVerse(selectedVerse);
 
-    // Split into fragments
     const verseFragments = splitVerseIntoFragments(selectedVerse.text);
     const shuffled = shuffleFragments(verseFragments);
     setFragments(shuffled);
 
-    // Level 2: Show partial reference initially, then full at 15 seconds
     if (levelNumber === 2) {
       setShowFullReference(false);
-      const timer = setTimeout(() => {
-        setShowFullReference(true);
-      }, 15000); // Show full reference at 15 seconds
+      const timer = setTimeout(() => setShowFullReference(true), 15000);
       return () => clearTimeout(timer);
     }
 
-    // Level 3: Generate reference options
     if (levelNumber === 3) {
       const otherVerses = getRandomVerses(4, [selectedVerse.id]);
-      const options = [
-        selectedVerse.reference,
-        ...otherVerses.map((v) => v.reference),
-      ];
-      // Shuffle options
+      const options = [selectedVerse.reference, ...otherVerses.map((v) => v.reference)];
       const shuffledOptions = [...options].sort(() => Math.random() - 0.5);
       setReferenceOptions(shuffledOptions);
     }
@@ -92,58 +79,34 @@ export default function LevelPage() {
   };
 
   const handleTimeout = () => {
-    if (!verse) return;
+    if (!verse || isSubmitted) return;
     setIsSubmitted(true);
-    const correct = false;
-    const score = calculateLevelScore(
-      0,
-      levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard",
-      correct
-    );
+    const score = calculateLevelScore(0, levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard", false);
     addLevelScore({
       level: levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard",
       score,
       timeRemaining: 0,
-      correct,
+      correct: false,
     });
     setFeedback("incorrect");
-    setTimeout(() => {
-      proceedToNext();
-    }, 2500);
+    setTimeout(proceedToNext, 2500);
   };
 
-  // Timer
   useEffect(() => {
     if (isSubmitted || timeRemaining <= 0) return;
-
-    const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
+    const timer = setInterval(() => setTimeRemaining((prev) => Math.max(0, prev - 1)), 1000);
     return () => clearInterval(timer);
   }, [isSubmitted, timeRemaining]);
 
-  // Handle timeout separately
   useEffect(() => {
-    if (timeRemaining === 0 && !isSubmitted && verse) {
-      handleTimeout();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (timeRemaining === 0 && !isSubmitted && verse) handleTimeout();
   }, [timeRemaining, isSubmitted, verse]);
 
   const handleFragmentClick = (fragment: Fragment) => {
     if (isSubmitted) return;
-
-    // Remove if already selected
     if (selectedOrder.some((f) => f.id === fragment.id)) {
       setSelectedOrder(selectedOrder.filter((f) => f.id !== fragment.id));
     } else {
-      // Add to selection
       setSelectedOrder([...selectedOrder, fragment]);
     }
   };
@@ -151,205 +114,196 @@ export default function LevelPage() {
   const handleSubmit = () => {
     if (isSubmitted || !verse) return;
 
-    // Level 3: Check both fragment order and reference
     if (levelNumber === 3) {
-      if (!selectedReference) {
-        alert("Please select a Bible reference");
-        return;
-      }
+      if (!selectedReference) return;
       if (selectedReference !== verse.reference) {
         setIsSubmitted(true);
-        const score = calculateLevelScore(
-          timeRemaining,
-          "hard",
-          false
-        );
-        addLevelScore({
-          level: "hard",
-          score,
-          timeRemaining,
-          correct: false,
-        });
+        addLevelScore({ level: "hard", score: 0, timeRemaining, correct: false });
         setFeedback("incorrect");
-        setTimeout(() => {
-          proceedToNext();
-        }, 2500);
+        setTimeout(proceedToNext, 2500);
         return;
       }
     }
 
-    // Check fragment order
-    const correctOrder = fragments
-      .slice()
-      .sort((a, b) => a.originalIndex - b.originalIndex);
-    const isCorrect =
-      selectedOrder.length === correctOrder.length &&
-      selectedOrder.every(
-        (f, idx) => f.originalIndex === correctOrder[idx].originalIndex
-      );
+    const correctOrder = fragments.slice().sort((a, b) => a.originalIndex - b.originalIndex);
+    const isCorrect = selectedOrder.length === correctOrder.length && 
+                      selectedOrder.every((f, idx) => f.originalIndex === correctOrder[idx].originalIndex);
 
     setIsSubmitted(true);
-    const difficulty =
-      levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard";
+    const difficulty = levelNumber === 1 ? "easy" : levelNumber === 2 ? "medium" : "hard";
     const score = calculateLevelScore(timeRemaining, difficulty, isCorrect);
-    addLevelScore({
-      level: difficulty,
-      score,
-      timeRemaining,
-      correct: isCorrect,
-    });
+    addLevelScore({ level: difficulty, score, timeRemaining, correct: isCorrect });
     setFeedback(isCorrect ? "correct" : "incorrect");
-
-    setTimeout(() => {
-      proceedToNext();
-    }, 2500);
+    setTimeout(proceedToNext, 2500);
   };
 
   const getDisplayReference = () => {
     if (!verse) return "";
     if (levelNumber === 1) return verse.reference;
-    if (levelNumber === 2) {
-      if (showFullReference) return verse.reference;
-      const parts = verse.reference.split(" ");
-      return parts[0]; // Just the book name
-    }
-    return ""; // Level 3: no reference shown
+    if (levelNumber === 2) return showFullReference ? verse.reference : verse.reference.split(" ")[0];
+    return "";
   };
 
-  if (!verse) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
+  if (!verse) return <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center text-white">Loading...</div>;
 
   return (
-    <div
-      className={`min-h-screen p-4 transition-colors duration-300 ${
-        feedback === "correct"
-          ? "animate-flash-green"
-          : feedback === "incorrect"
-          ? "animate-flash-red"
-          : "bg-gradient-to-br from-blue-50 via-white to-amber-50"
-      }`}
-    >
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="glass-effect rounded-xl shadow-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-church-dark">
-              Level {levelNumber}
-            </h1>
-            <div className="text-lg font-semibold text-gray-600">
-              {levelNumber === 1
-                ? "Easy"
-                : levelNumber === 2
-                ? "Medium"
-                : "Hard"}
+    <div className={`min-h-screen p-4 md:p-8 relative overflow-hidden transition-colors duration-500 bg-[#0a0a0c]`}>
+      
+      {/* Dynamic Background Overlays */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${feedback === 'correct' ? 'bg-green-500/10 opacity-100' : feedback === 'incorrect' ? 'bg-red-500/10 opacity-100' : 'opacity-0'}`} />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />
+      </div>
+
+      <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+        
+        {/* --- Top Header Card --- */}
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }} 
+          animate={{ y: 0, opacity: 1 }}
+          className="glass-effect rounded-[2rem] border border-white/10 p-6 md:p-8 shadow-2xl overflow-hidden relative"
+        >
+          {/* Subtle Shine */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          
+          <div className="flex justify-between items-end mb-8">
+            <div className="space-y-1">
+              <span className="text-blue-400 text-xs font-bold tracking-[0.2em] uppercase">Phase 0{levelNumber}</span>
+              <h1 className="text-4xl font-black text-white flex items-center gap-3">
+                Level {levelNumber}
+                <span className="text-sm font-medium px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400">
+                  {levelNumber === 1 ? "Beginner" : levelNumber === 2 ? "Acolyte" : "Scholar"}
+                </span>
+              </h1>
+            </div>
+            
+            <div className="text-right">
+              <p className="text-gray-500 text-xs uppercase font-bold mb-1">Time Remaining</p>
+              <LevelTimer seconds={timeRemaining} totalSeconds={LEVEL_TIME} />
             </div>
           </div>
 
-          <LevelTimer seconds={timeRemaining} totalSeconds={LEVEL_TIME} />
+          <AnimatePresence mode="wait">
+            {getDisplayReference() && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="py-4 px-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 text-center"
+              >
+                <p className="text-2xl font-bold text-blue-400 tracking-tight italic">
+                  "{getDisplayReference()}"
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
-          {getDisplayReference() && (
-            <div className={`mt-4 text-center transition-opacity duration-500 ${
-              levelNumber === 2 && !showFullReference ? "opacity-100" : "opacity-100"
-            }`}>
-              <p className="text-2xl font-semibold text-church-blue">
-                {getDisplayReference()}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Level 3: Reference Selection */}
+        {/* --- Level 3: Reference Selection --- */}
         {levelNumber === 3 && (
-          <div className="glass-effect rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-semibold mb-4 text-center">
-              Select the correct Bible reference:
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-effect rounded-[2rem] border border-white/10 p-8">
+            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 text-center flex items-center justify-center gap-2">
+              <Hash className="w-4 h-4" /> Identify the Source
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {referenceOptions.map((ref, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedReference(ref)}
                   disabled={isSubmitted}
-                  className={`
-                    px-4 py-3 rounded-lg border-2 transition-all touch-target
-                    ${
-                      selectedReference === ref
-                        ? "border-church-blue bg-blue-100 shadow-lg"
-                        : "border-gray-300 bg-white hover:border-church-blue"
-                    }
-                    ${isSubmitted ? "opacity-50 cursor-not-allowed" : ""}
-                  `}
+                  className={`relative group px-6 py-4 rounded-2xl border-2 transition-all duration-300 text-lg font-bold
+                    ${selectedReference === ref 
+                      ? "border-blue-500 bg-blue-500/10 text-white shadow-[0_0_20px_rgba(59,130,246,0.2)]" 
+                      : "border-white/5 bg-white/5 text-gray-500 hover:border-white/20 hover:text-gray-300"}`}
                 >
-                  <span className="text-lg font-medium">{ref}</span>
+                  {ref}
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
-        {/* Fragment Selection Area */}
-        <div className="glass-effect rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Arrange the fragments in order:
-          </h2>
-          <div className="space-y-4">
-            {/* Selected fragments (in order) */}
-            <div className="min-h-[100px] p-4 bg-blue-50 rounded-lg border-2 border-dashed border-church-blue">
-              {selectedOrder.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {selectedOrder.map((fragment, idx) => (
+        {/* --- Main Fragment Interaction Area --- */}
+        <div className="grid grid-cols-1 gap-6">
+          
+          {/* Target Zone */}
+          <motion.div layout className="glass-effect rounded-[2rem] border-2 border-dashed border-white/10 p-6 min-h-[160px] bg-white/[0.02]">
+            <h2 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Layers className="w-4 h-4" /> Reconstructed Verse
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              <AnimatePresence>
+                {selectedOrder.map((fragment) => (
+                  <motion.div key={fragment.id} layoutId={fragment.id} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
                     <FragmentDraggable
-                      key={fragment.id}
                       fragment={fragment}
-                      isSelected={false}
+                      isSelected={true}
                       onClick={() => handleFragmentClick(fragment)}
                       isInOrder={false}
                     />
-                  ))}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              {selectedOrder.length === 0 && (
+                <div className="w-full flex flex-col items-center justify-center py-8 text-gray-600">
+                  <p className="text-sm font-medium">Select fragments below to begin assembly</p>
                 </div>
-              ) : (
-                <p className="text-gray-400 text-center py-4">
-                  Tap fragments below to add them here
-                </p>
               )}
             </div>
+          </motion.div>
 
-            {/* Available fragments */}
-            <div className="flex flex-wrap gap-3">
-              {fragments.map((fragment) => {
-                const isSelected = selectedOrder.some((f) => f.id === fragment.id);
-                if (isSelected) return null;
-                return (
-                  <FragmentDraggable
-                    key={fragment.id}
-                    fragment={fragment}
-                    isSelected={false}
-                    onClick={() => handleFragmentClick(fragment)}
-                    isInOrder={false}
-                  />
-                );
-              })}
+          {/* Source Zone */}
+          <motion.div layout className="p-2">
+            <div className="flex flex-wrap justify-center gap-3">
+              <AnimatePresence>
+                {fragments.map((fragment) => {
+                  const isSelected = selectedOrder.some((f) => f.id === fragment.id);
+                  if (isSelected) return null;
+                  return (
+                    <motion.div key={fragment.id} layoutId={fragment.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      <FragmentDraggable
+                        fragment={fragment}
+                        isSelected={false}
+                        onClick={() => handleFragmentClick(fragment)}
+                        isInOrder={false}
+                      />
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Submit Button */}
-        <div className="text-center">
+        {/* --- Submit Action --- */}
+        <div className="pt-8 flex flex-col items-center gap-4">
           <button
             onClick={handleSubmit}
             disabled={isSubmitted || selectedOrder.length === 0}
-            className="px-8 py-4 bg-church-blue text-white rounded-lg font-semibold text-xl shadow-lg hover:bg-blue-600 active:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors touch-target"
+            className={`group relative px-12 py-5 rounded-2xl font-black text-xl transition-all duration-300 transform
+              ${isSubmitted || selectedOrder.length === 0 
+                ? "bg-white/5 text-gray-600 cursor-not-allowed border border-white/5" 
+                : "bg-white text-black hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.2)]"}`}
           >
-            {isSubmitted ? "Processing..." : "Submit"}
+            {isSubmitted ? (
+               <div className="flex items-center gap-3">
+                  {feedback === 'correct' ? <CheckCircle2 className="text-green-600" /> : <AlertCircle className="text-red-600" />}
+                  {feedback === 'correct' ? "PERFECT" : "RETRYING..."}
+               </div>
+            ) : "SUBMIT ORDER"}
+            
+            {!isSubmitted && selectedOrder.length > 0 && (
+               <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shine" />
+            )}
           </button>
+          
+          <div className="flex items-center gap-6 text-gray-500 text-xs font-bold uppercase tracking-widest">
+             <span className="flex items-center gap-2"><Trophy className="w-3 h-3 text-amber-500" /> Max Points: {levelNumber * 1000}</span>
+             <span className="w-1 h-1 rounded-full bg-white/20" />
+             <span>Strict Mode Active</span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
