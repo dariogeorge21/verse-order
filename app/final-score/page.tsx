@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useGameStore } from "@/store/gameStore";
 import { getScoreBreakdown } from "@/utils/scoring";
@@ -21,6 +21,7 @@ export default function FinalScorePage() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const hasSubmittedRef = useRef(false); // Prevent duplicate submissions
 
   const finalScore = getFinalScore();
   const breakdown = getScoreBreakdown(levelScores);
@@ -57,8 +58,12 @@ export default function FinalScorePage() {
 
   useEffect(() => {
     const submitScore = async () => {
-      if (!playerData) return;
+      // Prevent duplicate submissions
+      if (!playerData || hasSubmittedRef.current) return;
+      
+      hasSubmittedRef.current = true;
       setIsSubmitting(true);
+      
       try {
         const playerRecord: Omit<PlayerRecord, "id" | "created_at"> = {
           name: playerData.name,
@@ -69,16 +74,26 @@ export default function FinalScorePage() {
           medium_score: breakdown.medium,
           hard_score: breakdown.hard,
         };
+        
         const { error } = await supabase.from("players").insert(playerRecord);
-        if (error) console.error("Error submitting score:", error);
+        
+        if (error) {
+          console.error("Error submitting score:", error);
+          // Reset flag on error so user can retry if needed
+          hasSubmittedRef.current = false;
+        }
       } catch (error) {
         console.error("Error submitting score:", error);
+        // Reset flag on error so user can retry if needed
+        hasSubmittedRef.current = false;
       } finally {
         setIsSubmitting(false);
       }
     };
+    
     submitScore();
-  }, [playerData, finalScore, breakdown, securityCode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount - dependencies removed to prevent re-submission
 
   const handlePlayAgain = () => {
     resetGame();
