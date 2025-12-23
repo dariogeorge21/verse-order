@@ -120,7 +120,7 @@ function FeatureItem({ icon, title, desc }: { icon: React.ReactNode, title: stri
         {icon}
       </div>
       <div>
-        <h3 className="font-bold text-black text-lg tracking-tight">{title}</h3>
+        <h3 className="font-bold text-white text-lg tracking-tight">{title}</h3>
         <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
       </div>
     </div>
