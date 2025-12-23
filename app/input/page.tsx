@@ -208,9 +208,12 @@ export default function InputPage() {
                   id="name"
                   type="text"
                   value={name}
-                  readOnly
-                  className="w-full pl-12 pr-16 py-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:bg-white/10 transition-all outline-none text-lg font-medium cursor-default"
-                  placeholder="Use voice input to enter name..."
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                  }}
+                  className="w-full pl-12 pr-16 py-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:bg-white/10 transition-all outline-none text-lg font-medium"
+                  placeholder="Enter your name or use voice input..."
                   maxLength={50}
                 />
                 

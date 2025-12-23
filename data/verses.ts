@@ -8,25 +8,25 @@ export interface Verse {
 export const VERSES: Verse[] = [
   {
     id: "1",
-    text: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+    text: "For God so loved the world that he gave his one and only Son, that who believes in him may not perish but have eternal life.",
     reference: "John 3:16",
     difficulty: "easy",
   },
   {
     id: "2",
-    text: "I can do all this through him who gives me strength.",
+    text: "I can do all things through him who strengthens me.",
     reference: "Philippians 4:13",
     difficulty: "easy",
   },
   {
     id: "3",
-    text: "Trust in the Lord with all your heart and lean not on your own understanding.",
+    text: "Trust in the Lord with all your heart and do not rely on your own insight .",
     reference: "Proverbs 3:5",
     difficulty: "easy",
   },
   {
     id: "4",
-    text: "The Lord is my shepherd, I lack nothing.",
+    text: "The Lord is my shepherd, I shall not want.",
     reference: "Psalm 23:1",
     difficulty: "easy",
   },
@@ -38,7 +38,7 @@ export const VERSES: Verse[] = [
   },
   {
     id: "6",
-    text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.",
+    text: "For surely I know the plans I have for you, says the Lord, plans for welfare and not to harm ,  to give your future with hope.",
     reference: "Jeremiah 29:11",
     difficulty: "medium",
   },
@@ -50,7 +50,7 @@ export const VERSES: Verse[] = [
   },
   {
     id: "8",
-    text: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.",
+    text: "Do not worry about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God.",
     reference: "Philippians 4:6",
     difficulty: "medium",
   },
@@ -68,25 +68,25 @@ export const VERSES: Verse[] = [
   },
   {
     id: "11",
-    text: "But those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint.",
+    text: "but those who wait for the LORD shall renew their strength, they shall mount up with wings like eagles, they shall run and not be weary, they shall walk and not faint.",
     reference: "Isaiah 40:31",
     difficulty: "hard",
   },
   {
     id: "12",
-    text: "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.",
+    text: "Do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my victorious right hand.",
     reference: "Isaiah 41:10",
     difficulty: "hard",
   },
   {
     id: "13",
-    text: "For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.",
+    text: "For God has not given us a spirit of cowardice,but rather a spirit of power and love and self-control.",
     reference: "2 Timothy 1:7",
     difficulty: "hard",
   },
   {
     id: "14",
-    text: "The Lord your God is with you, the Mighty Warrior who saves. He will take great delight in you; in his love he will no longer rebuke you, but will rejoice over you with singing.",
+    text: "The Lord your God is in your midst, the  Warrior who gives victory,he will rejoice over with you with gladness,he will renew you in his love,he will exult over you with loud singing.",
     reference: "Zephaniah 3:17",
     difficulty: "hard",
   },
@@ -98,7 +98,7 @@ export const VERSES: Verse[] = [
   },
   {
     id: "16",
-    text: "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
+    text: "Love is patient, love is kind. love does not envy, love does not boast, it is not arrogant.",
     reference: "1 Corinthians 13:4",
     difficulty: "medium",
   },
@@ -110,13 +110,13 @@ export const VERSES: Verse[] = [
   },
   {
     id: "18",
-    text: "Come to me, all you who are weary and burdened, and I will give you rest.",
+    text: "Come to me, all you who are weary and are carrying heavy burdens, and I will give you rest.",
     reference: "Matthew 11:28",
     difficulty: "medium",
   },
   {
     id: "19",
-    text: "The Lord is close to the brokenhearted and saves those who are crushed in spirit.",
+    text: "The Lord is near to the brokenhearted and saves the crushed in spirit.",
     reference: "Psalm 34:18",
     difficulty: "medium",
   },
