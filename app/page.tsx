@@ -106,7 +106,7 @@ export default function Home() {
         </motion.div>
 
         {/* --- CTA Button --- */}
-        <motion.div variants={fadeInUp} className="mt-12 group">
+        <motion.div variants={fadeInUp} className="mt-12 group">  
           <button
             onClick={handleGetStarted}
             className="relative flex items-center gap-3 px-10 py-5 bg-white text-black rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95 overflow-hidden"
