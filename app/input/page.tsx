@@ -68,6 +68,7 @@ export default function InputPage() {
   const [errors, setErrors] = useState<{ name?: string; region?: string }>({});
   const [isListening, setIsListening] = useState(false);
   const [isSpeechSupported, setIsSpeechSupported] = useState(false);
+  const [inputMode, setInputMode] = useState<'voice' | 'keyboard'>('voice');
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   // --- (Keep existing useEffect hooks for SpeechRecognition logic) ---
@@ -213,12 +214,12 @@ export default function InputPage() {
                     if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
                   }}
                   className="w-full pl-12 pr-16 py-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:bg-white/10 transition-all outline-none text-lg font-medium"
-                  placeholder="Enter your name or use voice input..."
+                  placeholder={inputMode === 'keyboard' ? "Enter your name..." : "Enter your name or use voice input..."}
                   maxLength={50}
                 />
                 
                 {/* Voice Input Trigger */}
-                {isSpeechSupported && (
+                {isSpeechSupported && inputMode === 'voice' && (
                   <button
                     type="button"
                     onClick={handleVoiceInput}
@@ -260,6 +261,24 @@ export default function InputPage() {
                   </motion.p>
                 ) : null}
               </AnimatePresence>
+
+              {/* Input Mode Toggle */}
+              {isSpeechSupported && (
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInputMode(inputMode === 'voice' ? 'keyboard' : 'voice');
+                      if (isListening) {
+                        handleVoiceInput(); // Stop listening if switching
+                      }
+                    }}
+                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors underline"
+                  >
+                    {inputMode === 'voice' ? 'Use keyboard instead' : 'Use voice instead'}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Region Select Group */}
