@@ -142,13 +142,13 @@ export default function LeaderboardPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-blue-600/10 blur-[120px] rounded-full" />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
         
         {/* --- Header Section --- */}
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex flex-col md:flex-row justify-between items-center gap-6 glass-effect p-6 md:p-8 rounded-[2.5rem] border border-white/10 shadow-2xl"
+          className="flex flex-col md:flex-row justify-between items-center gap-4 glass-effect p-5 md:p-6 rounded-[2.5rem] border border-white/10 shadow-2xl"
         >
           <div className="flex items-center gap-4">
             <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20">
@@ -180,7 +180,7 @@ export default function LeaderboardPage() {
         </motion.div>
 
         {/* --- Leaderboard Content --- */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
@@ -267,7 +267,7 @@ export default function LeaderboardPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md glass-effect border border-red-500/20 bg-[#121216] rounded-[2rem] p-8 shadow-2xl"
+              className="relative w-full max-w-4xl glass-effect border border-red-500/20 bg-[#121216] rounded-[2rem] p-6 md:p-8 shadow-2xl"
               role="dialog"
               aria-modal="true"
               aria-labelledby="reset-modal-title"

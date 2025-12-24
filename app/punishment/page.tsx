@@ -38,12 +38,12 @@ export default function PunishmentPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-5xl relative z-10"
       >
-        <div className="relative glass-effect rounded-[2.5rem] border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 shadow-2xl overflow-hidden">
+        <div className="relative glass-effect rounded-[2.5rem] border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-6 md:p-8 shadow-2xl overflow-hidden">
           
           {/* Header Section */}
-          <div className="text-center space-y-4 mb-8">
+          <div className="text-center space-y-3 mb-6">
             <div className="flex justify-center">
               <div className="p-4 rounded-full bg-red-500/10 border border-red-500/20">
                 <Flame className="w-8 h-8 text-red-500 animate-pulse" />
@@ -56,7 +56,7 @@ export default function PunishmentPage() {
           </div>
 
           {/* Progress Bar Area */}
-          <div className="mb-8 space-y-2">
+          <div className="mb-6 space-y-2">
             <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-500">
               <span>Penance Progress</span>
               <span className={allChecked ? "text-green-400" : "text-blue-400"}>
@@ -74,7 +74,7 @@ export default function PunishmentPage() {
           </div>
 
           {/* List of Tasks */}
-          <div className="space-y-3 mb-8">
+          <div className="space-y-3 mb-6">
             {checked.map((isChecked, idx) => (
               <motion.div
                 key={idx}
@@ -120,7 +120,7 @@ export default function PunishmentPage() {
           <button
             onClick={handleContinue}
             disabled={!allChecked}
-            className={`group relative w-full py-5 rounded-2xl font-black text-xl transition-all duration-300 transform
+            className={`group relative w-full py-4 rounded-2xl font-black text-xl transition-all duration-300 transform
               ${allChecked 
                 ? "bg-white text-black hover:scale-[1.02] shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95" 
                 : "bg-white/5 text-gray-600 cursor-not-allowed"}`}

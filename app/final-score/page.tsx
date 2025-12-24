@@ -127,13 +127,13 @@ export default function FinalScorePage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="w-full max-w-2xl relative z-10"
+            className="w-full max-w-6xl relative z-10"
           >
             {/* Main Card */}
-            <div className="relative glass-effect rounded-[3rem] border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-8 md:p-12 shadow-2xl overflow-hidden">
+            <div className="relative glass-effect rounded-[3rem] border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-6 md:p-8 shadow-2xl overflow-hidden">
               
               {/* Header */}
-              <div className="text-center space-y-2 mb-10">
+              <div className="text-center space-y-2 mb-6">
                 <motion.div 
                   initial={{ y: -20 }} 
                   animate={{ y: 0 }} 
@@ -153,10 +153,10 @@ export default function FinalScorePage() {
               <motion.div 
                 initial={{ scale: 0.8 }} 
                 animate={{ scale: 1 }} 
-                className="relative mb-12"
+                className="relative mb-6"
               >
                 <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full opacity-50" />
-                <div className="relative py-10 rounded-[2rem] bg-gradient-to-b from-white/10 to-transparent border border-white/10 text-center shadow-inner">
+                <div className="relative py-6 rounded-[2rem] bg-gradient-to-b from-white/10 to-transparent border border-white/10 text-center shadow-inner">
                   <p className="text-xs font-black uppercase tracking-[0.4em] text-blue-400 mb-2">Total Score</p>
                   <span className="text-8xl md:text-9xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
                     {finalScore}
@@ -165,7 +165,7 @@ export default function FinalScorePage() {
               </motion.div>
 
               {/* Breakdown Grid */}
-              <div className="space-y-6 mb-12">
+              <div className="space-y-4 mb-6">
                 <h2 className="text-center text-xs font-black uppercase tracking-[0.2em] text-gray-500">Performance Breakdown</h2>
                 <div className="grid grid-cols-3 gap-4">
                   <ScoreBox label="Easy" score={breakdown.easy} color="text-green-400" borderColor="border-green-500/20" bgColor="bg-green-500/5" />
@@ -175,10 +175,10 @@ export default function FinalScorePage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col md:flex-row gap-3">
                 <button
                   onClick={handleViewLeaderboard}
-                  className="group relative w-full py-5 bg-white text-black rounded-2xl font-black text-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.2)] overflow-hidden"
+                  className="group relative flex-1 py-4 bg-white text-black rounded-2xl font-black text-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.2)] overflow-hidden"
                 >
                   <div className="relative z-10 flex items-center justify-center gap-3">
                     <LayoutDashboard className="w-6 h-6" />
@@ -189,7 +189,7 @@ export default function FinalScorePage() {
 
                 <button
                   onClick={handlePlayAgain}
-                  className="w-full py-5 rounded-2xl border border-white/10 bg-white/5 font-bold text-lg text-gray-300 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-3"
+                  className="flex-1 py-4 rounded-2xl border border-white/10 bg-white/5 font-bold text-lg text-gray-300 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-3"
                 >
                   <RotateCcw className="w-5 h-5" />
                   Try Again

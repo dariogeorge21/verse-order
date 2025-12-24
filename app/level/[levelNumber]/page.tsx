@@ -156,18 +156,18 @@ export default function LevelPage() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+      <div className="max-w-7xl mx-auto space-y-5 relative z-10">
         
         {/* --- Top Header Card --- */}
         <motion.div 
           initial={{ y: -20, opacity: 0 }} 
           animate={{ y: 0, opacity: 1 }}
-          className="glass-effect rounded-[2rem] border border-white/10 p-6 md:p-8 shadow-2xl overflow-hidden relative"
+          className="glass-effect rounded-[2rem] border border-white/10 p-5 md:p-6 shadow-2xl overflow-hidden relative"
         >
           {/* Subtle Shine */}
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
           
-          <div className="flex justify-between items-end mb-8">
+          <div className="flex justify-between items-end mb-5">
             <div className="space-y-1">
               <span className="text-blue-400 text-xs font-bold tracking-[0.2em] uppercase">Phase 0{levelNumber}</span>
               <h1 className="text-4xl font-black text-white flex items-center gap-3">
@@ -189,7 +189,7 @@ export default function LevelPage() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="py-4 px-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 text-center"
+                className="py-3 px-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 text-center"
               >
                 <p className="text-2xl font-bold text-blue-400 tracking-tight italic">
                   "{getDisplayReference()}"
@@ -201,8 +201,8 @@ export default function LevelPage() {
 
         {/* --- Level 3: Reference Selection --- */}
         {levelNumber === 3 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-effect rounded-[2rem] border border-white/10 p-8">
-            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6 text-center flex items-center justify-center gap-2">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-effect rounded-[2rem] border border-white/10 p-5 md:p-6">
+            <h2 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-4 text-center flex items-center justify-center gap-2">
               <Hash className="w-4 h-4" /> Identify the Source
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -227,7 +227,7 @@ export default function LevelPage() {
         <div className="grid grid-cols-1 gap-6">
           
           {/* Target Zone */}
-          <motion.div layout className="glass-effect rounded-[2rem] border-2 border-dashed border-white/10 p-6 min-h-[160px] bg-white/[0.02]">
+          <motion.div layout className="glass-effect rounded-[2rem] border-2 border-dashed border-white/10 p-5 min-h-[140px] bg-white/[0.02]">
             <h2 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
               <Layers className="w-4 h-4" /> Reconstructed Verse
             </h2>
@@ -276,11 +276,11 @@ export default function LevelPage() {
         </div>
 
         {/* --- Submit Action --- */}
-        <div className="pt-8 flex flex-col items-center gap-4">
+        <div className="pt-6 flex flex-col items-center gap-3">
           <button
             onClick={handleSubmit}
             disabled={isSubmitted || selectedOrder.length === 0}
-            className={`group relative px-12 py-5 rounded-2xl font-black text-xl transition-all duration-300 transform
+            className={`group relative px-12 py-4 rounded-2xl font-black text-xl transition-all duration-300 transform
               ${isSubmitted || selectedOrder.length === 0 
                 ? "bg-white/5 text-gray-600 cursor-not-allowed border border-white/5" 
                 : "bg-white text-black hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.2)]"}`}

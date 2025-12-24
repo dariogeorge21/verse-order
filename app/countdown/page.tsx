@@ -56,7 +56,7 @@ export default function CountdownPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-slow" />
       </div>
 
-      <div className="relative z-10 w-full max-w-lg">
+      <div className="relative z-10 w-full max-w-5xl">
         <AnimatePresence mode="wait">
           {/* PHASE 1: SECURITY CODE DISPLAY */}
           {displayCode && countdown === null && (
@@ -65,7 +65,7 @@ export default function CountdownPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-              className="space-y-8 text-center"
+              className="space-y-6 text-center"
             >
               <div className="flex flex-col items-center gap-4">
                 <div className="p-4 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
@@ -84,7 +84,7 @@ export default function CountdownPage() {
                 {/* Glow effect for code */}
                 <div className="absolute -inset-4 bg-amber-500/20 rounded-[2rem] blur-xl opacity-50" />
                 
-                <div className="relative glass-effect rounded-3xl border border-white/10 bg-white/[0.03] p-10 overflow-hidden">
+                <div className="relative glass-effect rounded-3xl border border-white/10 bg-white/[0.03] p-5 md:p-6 overflow-hidden">
                   <div className="text-7xl md:text-8xl font-black text-amber-400 tracking-[0.2em] font-mono leading-none">
                     {displayCode}
                   </div>

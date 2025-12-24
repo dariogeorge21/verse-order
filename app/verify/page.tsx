@@ -71,12 +71,12 @@ export default function VerifyPage() {
       <motion.div 
         animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : {}}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-5xl relative z-10"
       >
         {/* Decorative Glow behind card */}
         <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/20 to-purple-600/20 rounded-[2.5rem] blur-xl opacity-50" />
 
-        <div className="relative glass-effect rounded-[2.5rem] border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-8 md:p-10 shadow-2xl overflow-hidden">
+        <div className="relative glass-effect rounded-[2.5rem] border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-6 md:p-8 shadow-2xl overflow-hidden">
           
           {/* Top Decorative Icon */}
           <div className="flex justify-center mb-6">
@@ -85,13 +85,13 @@ export default function VerifyPage() {
             </div>
           </div>
 
-          <div className="text-center space-y-2 mb-8">
+          <div className="text-center space-y-2 mb-6">
             <h1 className="text-3xl font-black tracking-tight text-white">Security Check</h1>
             <p className="text-gray-500 text-sm font-medium uppercase tracking-widest">Enter the 6-Digit Cipher</p>
           </div>
 
           {/* Code Display Area */}
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div className="flex justify-center gap-2 md:gap-3">
               {[0, 1, 2, 3, 4, 5].map((idx) => (
                 <div
@@ -138,7 +138,7 @@ export default function VerifyPage() {
             </AnimatePresence>
 
             {/* Numeric Keypad */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2 md:gap-3 max-w-md mx-auto">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <KeypadButton key={num} onClick={() => handleNumberClick(num.toString())}>
                   {num}

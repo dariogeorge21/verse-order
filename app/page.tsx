@@ -68,7 +68,7 @@ export default function Home() {
           <h1 className="text-7xl md:text-9xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
             Verse Order
           </h1>
-          <p className="text-lg md:text-2xl text-gray-400 font-light max-w-2xl mx-auto">
+          <p className="text-lg md:text-2xl text-gray-400 font-light max-w-4xl mx-auto">
             Bring clarity to the Word. Arrange scrambled fragments into perfect harmony.
           </p>
         </motion.div>
@@ -76,16 +76,16 @@ export default function Home() {
         {/* --- Main Glassmorphic Card --- */}
         <motion.div 
           variants={fadeInUp}
-          className="relative group w-full max-w-3xl"
+          className="relative group w-full max-w-6xl"
         >
           {/* Subtle Glow behind card */}
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
           
-          <div className="relative glass-effect rounded-3xl border border-white/10 bg-black/95 backdrop-blur-2xl p-8 md:p-12 overflow-hidden">
+          <div className="relative glass-effect rounded-3xl border border-white/10 bg-black/95 backdrop-blur-2xl p-6 md:p-8 overflow-hidden">
             {/* Top Shine Effect */}
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-            <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
               <FeatureItem 
                 icon={<BookOpen className="w-6 h-6 text-blue-400" />} 
                 title="3 Levels" 

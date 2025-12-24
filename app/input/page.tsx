@@ -178,28 +178,27 @@ export default function InputPage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-5xl"
       >
         {/* Decorative glowing border */}
         <div className="absolute -inset-0.5 bg-gradient-to-b from-blue-500/30 to-purple-600/30 rounded-[2.5rem] blur-md opacity-50"></div>
 
-        <div className="relative glass-effect rounded-[2rem] border border-white/10 bg-black/95 backdrop-blur-2xl p-8 md:p-10 space-y-8 shadow-2xl overflow-hidden">
+        <div className="relative glass-effect rounded-[2rem] border border-white/10 bg-black/95 backdrop-blur-2xl p-6 md:p-8 space-y-6 shadow-2xl overflow-hidden">
            {/* Top Shine */}
            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
 
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-2 mb-4">
             <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-              Profile Setup
+              We want to know you
             </h1>
             <p className="text-gray-400 flex items-center justify-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              Prepare for the challenge
+              Prepare for the challenge!
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Name Input Group */}
-            <div className="space-y-2">
+            <div className="space-y-2 mb-3">
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 ml-1">
                 Player Name
               </label>
@@ -282,15 +281,15 @@ export default function InputPage() {
             </div>
 
             {/* Region Select Group */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-300 ml-1 flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-purple-400" />
                 Region (State)
               </label>
               
               {/* State Cards Grid */}
-              <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-                <div className="grid grid-cols-2 gap-2">
+              <div className="max-h-[250px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                   {INDIAN_STATES.map((state) => (
                     <motion.button
                       key={state}
