@@ -131,7 +131,7 @@ export default function LeaderboardPage() {
     if (rank === 1) return "from-yellow-400/20 to-transparent border-yellow-500/50 text-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.15)] ring-1 ring-yellow-500/20";
     if (rank === 2) return "from-gray-300/15 to-transparent border-gray-400/50 text-gray-200 shadow-[0_0_15px_rgba(156,163,175,0.1)]";
     if (rank === 3) return "from-orange-600/15 to-transparent border-orange-600/50 text-orange-300 shadow-[0_0_15px_rgba(234,88,12,0.1)]";
-    return "border-white/5 bg-white/[0.02] text-gray-300";
+    return "border-white/20 bg-black/40 backdrop-blur-sm text-gray-100";
   };
 
   return (
@@ -210,29 +210,40 @@ export default function LeaderboardPage() {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: idx * 0.05 }}
-                      className={`grid grid-cols-1 md:grid-cols-12 items-center px-4 md:px-8 py-4 md:py-5 rounded-2xl border bg-gradient-to-r transition-all duration-300 hover:translate-x-1 md:hover:translate-x-2 group ${getRankStyles(rank)}`}
+                      className={`grid grid-cols-1 md:grid-cols-12 items-center px-4 md:px-8 py-4 md:py-5 rounded-2xl border transition-all duration-300 hover:translate-x-1 md:hover:translate-x-2 group ${getRankStyles(rank)}`}
                     >
                       <div className="col-span-1 flex items-center gap-3 mb-2 md:mb-0">
-                        <span className="text-xl md:text-2xl font-black italic opacity-50 w-8 md:w-10">#{rank}</span>
+                        <span className={`text-xl md:text-2xl font-black italic w-8 md:w-10 ${
+                          rank <= 3 ? 'opacity-50' : 'opacity-60 text-gray-300'
+                        }`}>#{rank}</span>
                         {rank <= 3 && <Crown className="w-5 h-5 md:hidden" />}
                       </div>
                       
                       <div className="col-span-5 flex items-center gap-3 md:gap-4">
-                        <div className={`hidden md:flex w-10 h-10 rounded-full items-center justify-center font-black text-xs border ${rank <= 3 ? 'border-current' : 'border-white/10 bg-white/5'}`}>
-                          {rank <= 3 ? <Crown className="w-5 h-5" /> : player.name[0].toUpperCase()}
+                        <div className={`hidden md:flex w-10 h-10 rounded-full items-center justify-center font-black text-xs border ${rank <= 3 ? 'border-current' : 'border-white/30 bg-white/10 text-gray-100'}`}>
+                          {rank <= 3 ? <Crown className="w-5 h-5" /> : <span className="text-gray-100">{player.name[0].toUpperCase()}</span>}
                         </div>
-                        <span className="text-base md:text-lg font-bold tracking-tight text-white group-hover:text-blue-400 transition-colors break-words">
+                        <span className={`text-base md:text-lg font-bold tracking-tight break-words transition-colors ${
+                          rank <= 3 
+                            ? 'text-white group-hover:text-blue-400' 
+                            : 'text-gray-100 group-hover:text-blue-300'
+                        }`}>
                           {player.name}
                         </span>
                       </div>
 
-                      <div className="col-span-3 flex items-center gap-2 text-gray-400 md:text-gray-500">
+                      <div className={`col-span-3 flex items-center gap-2 ${rank <= 3 ? 'text-gray-400 md:text-gray-500' : 'text-gray-300'}`}>
                         <MapPin className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
                         <span className="text-xs md:text-sm font-medium truncate">{player.region}</span>
                       </div>
 
                       <div className="col-span-3 text-left md:text-right mt-2 md:mt-0">
-                        <span className={`text-xl md:text-2xl font-black tracking-tighter ${rank === 1 ? 'text-yellow-400' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-orange-400' : 'text-white'}`}>
+                        <span className={`text-xl md:text-2xl font-black tracking-tighter ${
+                          rank === 1 ? 'text-yellow-400' 
+                          : rank === 2 ? 'text-gray-300' 
+                          : rank === 3 ? 'text-orange-400' 
+                          : 'text-gray-100'
+                        }`}>
                           {player.final_score.toLocaleString()}
                         </span>
                       </div>
