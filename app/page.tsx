@@ -93,7 +93,7 @@ export default function Home() {
               />
               <FeatureItem 
                 icon={<Timer className="w-6 h-6 text-purple-400" />} 
-                title="30 Seconds" 
+                title="45 Seconds" 
                 desc="Race against the clock" 
               />
               <FeatureItem 
