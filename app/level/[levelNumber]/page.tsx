@@ -15,7 +15,7 @@ import { LevelTimer } from "@/components/LevelTimer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hash, Layers, Trophy, CheckCircle2, AlertCircle } from "lucide-react";
 
-const LEVEL_TIME = 30;
+const LEVEL_TIME = 45;
 
 export default function LevelPage() {
   const router = useRouter();
@@ -288,20 +288,10 @@ export default function LevelPage() {
             {isSubmitted ? (
                <div className="flex items-center gap-3">
                   {feedback === 'correct' ? <CheckCircle2 className="text-green-600" /> : <AlertCircle className="text-red-600" />}
-                  {feedback === 'correct' ? "PERFECT" : "RETRYING..."}
+                  {feedback === 'correct' ? "PERFECT" : "FAILED"}
                </div>
-            ) : "SUBMIT ORDER"}
-            
-            {!isSubmitted && selectedOrder.length > 0 && (
-               <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-shine" />
-            )}
+            ) : "SUBMIT ANSWER"}
           </button>
-          
-          <div className="flex items-center gap-6 text-gray-500 text-xs font-bold uppercase tracking-widest">
-             <span className="flex items-center gap-2"><Trophy className="w-3 h-3 text-amber-500" /> Max Points: {levelNumber * 1000}</span>
-             <span className="w-1 h-1 rounded-full bg-white/20" />
-             <span>Strict Mode Active</span>
-          </div>
         </div>
       </div>
     </div>
