@@ -13,7 +13,7 @@ import { calculateLevelScore } from "@/utils/scoring";
 import { FragmentDraggable } from "@/components/FragmentDraggable";
 import { LevelTimer } from "@/components/LevelTimer";
 import { motion, AnimatePresence } from "framer-motion";
-import { Hash, Layers, Trophy, CheckCircle2, AlertCircle } from "lucide-react";
+import { Hash, Layers, Trophy, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 
 const LEVEL_TIME = 45;
 
@@ -201,7 +201,15 @@ export default function LevelPage() {
 
         {/* --- Level 3: Reference Selection --- */}
         {levelNumber === 3 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-effect rounded-[2rem] border border-white/10 p-5 md:p-6">
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            className={`glass-effect rounded-[2rem] border p-5 md:p-6 transition-all duration-300 ${
+              !selectedReference && selectedOrder.length > 0 
+                ? "border-amber-500/50 bg-amber-500/5" 
+                : "border-white/10"
+            }`}
+          >
             <h2 className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-4 text-center flex items-center justify-center gap-2">
               <Hash className="w-4 h-4" /> Identify the Source
             </h2>
@@ -220,6 +228,23 @@ export default function LevelPage() {
                 </button>
               ))}
             </div>
+            
+            {/* Warning Indicator */}
+            <AnimatePresence>
+              {!selectedReference && selectedOrder.length > 0 && !isSubmitted && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mt-4 flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30"
+                >
+                  <AlertTriangle className="h-5 w-5 text-amber-400 flex-shrink-0" />
+                  <p className="text-sm font-medium text-amber-300">
+                    <span className="font-bold">Warning:</span> Don't forget to select the quotation reference above before submitting!
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
 
@@ -277,11 +302,25 @@ export default function LevelPage() {
 
         {/* --- Submit Action --- */}
         <div className="pt-6 flex flex-col items-center gap-3">
+          {/* Warning for Level 3 if reference not selected */}
+          {levelNumber === 3 && selectedOrder.length > 0 && !selectedReference && !isSubmitted && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/30"
+            >
+              <AlertTriangle className="h-4 w-4 text-red-400" />
+              <p className="text-xs font-bold text-red-400 uppercase tracking-wider">
+                Select a quotation reference to continue
+              </p>
+            </motion.div>
+          )}
+          
           <button
             onClick={handleSubmit}
-            disabled={isSubmitted || selectedOrder.length === 0}
+            disabled={isSubmitted || selectedOrder.length === 0 || (levelNumber === 3 && !selectedReference)}
             className={`group relative px-12 py-4 rounded-2xl font-black text-xl transition-all duration-300 transform
-              ${isSubmitted || selectedOrder.length === 0 
+              ${isSubmitted || selectedOrder.length === 0 || (levelNumber === 3 && !selectedReference)
                 ? "bg-white/5 text-gray-600 cursor-not-allowed border border-white/5" 
                 : "bg-white text-black hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.2)]"}`}
           >
@@ -290,6 +329,11 @@ export default function LevelPage() {
                   {feedback === 'correct' ? <CheckCircle2 className="text-green-600" /> : <AlertCircle className="text-red-600" />}
                   {feedback === 'correct' ? "PERFECT" : "FAILED"}
                </div>
+            ) : levelNumber === 3 && !selectedReference && selectedOrder.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
+                SELECT REFERENCE FIRST
+              </div>
             ) : "SUBMIT ANSWER"}
           </button>
         </div>
