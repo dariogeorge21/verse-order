@@ -70,11 +70,13 @@ export default function FinalScorePage() {
           region: playerData.region,
           security_code: securityCode || undefined,
           final_score: finalScore,
+          intro_score: breakdown.intro,
+          mcq_score: breakdown.mcq,
           easy_score: breakdown.easy,
           medium_score: breakdown.medium,
           hard_score: breakdown.hard,
         };
-        
+
         const { error } = await supabase.from("players").insert(playerRecord);
         
         if (error) {
@@ -167,7 +169,9 @@ export default function FinalScorePage() {
               {/* Breakdown Grid */}
               <div className="space-y-4 mb-6">
                 <h2 className="text-center text-xs font-black uppercase tracking-[0.2em] text-gray-500">Performance Breakdown</h2>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-5 gap-2 md:gap-4">
+                  <ScoreBox label="Intro" score={breakdown.intro} color="text-blue-300" borderColor="border-blue-400/20" bgColor="bg-blue-400/5" />
+                  <ScoreBox label="Quiz" score={breakdown.mcq} color="text-purple-400" borderColor="border-purple-500/20" bgColor="bg-purple-500/5" />
                   <ScoreBox label="Easy" score={breakdown.easy} color="text-green-400" borderColor="border-green-500/20" bgColor="bg-green-500/5" />
                   <ScoreBox label="Medium" score={breakdown.medium} color="text-yellow-400" borderColor="border-yellow-500/20" bgColor="bg-yellow-500/5" />
                   <ScoreBox label="Hard" score={breakdown.hard} color="text-red-400" borderColor="border-red-500/20" bgColor="bg-red-500/5" />

@@ -17,9 +17,11 @@ export interface PlayerRecord {
   region: string;
   security_code?: string;
   final_score: number;
-  easy_score: number;
-  medium_score: number;
-  hard_score: number;
+  intro_score: number;    // Level 1: Complete-the-verse
+  mcq_score: number;      // Level 2: Multiple choice
+  easy_score: number;     // Level 3: Easy (fragment arrange)
+  medium_score: number;   // Level 4: Medium (fragment arrange)
+  hard_score: number;     // Level 5: Hard (fragment + reference)
   created_at?: string;
 }
 

@@ -6,8 +6,10 @@ export interface PlayerData {
   region: string;
 }
 
+export type LevelType = "intro" | "mcq" | "easy" | "medium" | "hard";
+
 export interface LevelScore {
-  level: "easy" | "medium" | "hard";
+  level: LevelType;
   score: number;
   timeRemaining: number;
   correct: boolean;
@@ -19,7 +21,7 @@ export interface GameState {
   securityCode: string | null;
 
   // Game state
-  currentLevel: 1 | 2 | 3 | null;
+  currentLevel: 1 | 2 | 3 | 4 | 5 | null;
   currentVerse: Verse | null;
   levelScores: LevelScore[];
   gameStarted: boolean;
@@ -29,7 +31,7 @@ export interface GameState {
   setPlayerData: (data: PlayerData) => void;
   generateSecurityCode: () => string;
   setSecurityCode: (code: string) => void;
-  setCurrentLevel: (level: 1 | 2 | 3 | null) => void;
+  setCurrentLevel: (level: 1 | 2 | 3 | 4 | 5 | null) => void;
   setCurrentVerse: (verse: Verse | null) => void;
   addLevelScore: (score: LevelScore) => void;
   setGameStarted: (started: boolean) => void;

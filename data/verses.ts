@@ -1,8 +1,29 @@
+export type DifficultyType = "intro" | "mcq" | "easy" | "medium" | "hard";
+
 export interface Verse {
   id: string;
   text: string;
   reference: string;
-  difficulty?: "easy" | "medium" | "hard";
+  difficulty?: DifficultyType;
+}
+
+// Data for Level 1 (Complete-the-verse): Shows verse with last 3 fragments missing
+export interface IncompleteVerse {
+  id: string;
+  visibleText: string;       // The visible portion of the verse
+  missingFragments: string[]; // The 3 fragments to arrange (in correct order)
+  fullText: string;          // Complete verse text
+  reference: string;
+}
+
+// Data for Level 2 (Multiple Choice): Complete the quotation
+export interface MCQVerse {
+  id: string;
+  incompleteText: string;     // The verse with ending removed
+  correctEnding: string;      // The correct completion
+  wrongOptions: string[];     // 3 wrong options
+  fullText: string;           // Complete verse text
+  reference: string;
 }
 
 export const VERSES: Verse[] = [
@@ -143,3 +164,128 @@ export function getRandomVerses(count: number, excludeIds: string[] = []): Verse
   return shuffled.slice(0, count);
 }
 
+// ==========================================
+// LEVEL 1: Complete-the-verse Data
+// Display verse with last 3 fragments missing
+// ==========================================
+export const INCOMPLETE_VERSES: IncompleteVerse[] = [
+  {
+    id: "intro-1",
+    visibleText: "For God so loved the world that he gave his one and only Son, that who believes in him",
+    missingFragments: ["may not", "perish but", "have eternal life."],
+    fullText: "For God so loved the world that he gave his one and only Son, that who believes in him may not perish but have eternal life.",
+    reference: "John 3:16",
+  },
+  {
+    id: "intro-2",
+    visibleText: "I can do all things",
+    missingFragments: ["through him", "who strengthens", "me."],
+    fullText: "I can do all things through him who strengthens me.",
+    reference: "Philippians 4:13",
+  },
+  {
+    id: "intro-3",
+    visibleText: "Trust in the Lord with all your heart",
+    missingFragments: ["and do not", "rely on", "your own insight."],
+    fullText: "Trust in the Lord with all your heart and do not rely on your own insight.",
+    reference: "Proverbs 3:5",
+  },
+  {
+    id: "intro-4",
+    visibleText: "The Lord is my shepherd,",
+    missingFragments: ["I shall", "not", "want."],
+    fullText: "The Lord is my shepherd, I shall not want.",
+    reference: "Psalm 23:1",
+  },
+  {
+    id: "intro-5",
+    visibleText: "For where two or three gather in my name,",
+    missingFragments: ["there am", "I with", "them."],
+    fullText: "For where two or three gather in my name, there am I with them.",
+    reference: "Matthew 18:20",
+  },
+];
+
+export function getRandomIncompleteVerse(): IncompleteVerse {
+  return INCOMPLETE_VERSES[Math.floor(Math.random() * INCOMPLETE_VERSES.length)];
+}
+
+// ==========================================
+// LEVEL 2: Multiple Choice Quotation Data
+// Complete the quotation with correct option
+// ==========================================
+export const MCQ_VERSES: MCQVerse[] = [
+  {
+    id: "mcq-1",
+    incompleteText: "The Lord will fight for you;",
+    correctEnding: "you need only to be still.",
+    wrongOptions: [
+      "you must stand firm in faith.",
+      "you shall overcome all fears.",
+      "you must trust His timing.",
+    ],
+    fullText: "The Lord will fight for you; you need only to be still.",
+    reference: "Exodus 14:14",
+  },
+  {
+    id: "mcq-2",
+    incompleteText: "Cast all your anxiety on him",
+    correctEnding: "because he cares for you.",
+    wrongOptions: [
+      "because he is always listening.",
+      "for he knows your heart.",
+      "and he will make a way.",
+    ],
+    fullText: "Cast all your anxiety on him because he cares for you.",
+    reference: "1 Peter 5:7",
+  },
+  {
+    id: "mcq-3",
+    incompleteText: "Come to me, all you who are weary and are carrying heavy burdens,",
+    correctEnding: "and I will give you rest.",
+    wrongOptions: [
+      "and I will give you strength.",
+      "for I am your shepherd.",
+      "and you shall find peace.",
+    ],
+    fullText: "Come to me, all you who are weary and are carrying heavy burdens, and I will give you rest.",
+    reference: "Matthew 11:28",
+  },
+  {
+    id: "mcq-4",
+    incompleteText: "The Lord is near to the brokenhearted",
+    correctEnding: "and saves the crushed in spirit.",
+    wrongOptions: [
+      "and heals those who mourn.",
+      "and comforts all who grieve.",
+      "and restores the weary soul.",
+    ],
+    fullText: "The Lord is near to the brokenhearted and saves the crushed in spirit.",
+    reference: "Psalm 34:18",
+  },
+  {
+    id: "mcq-5",
+    incompleteText: "In the beginning was the Word, and the Word was with God,",
+    correctEnding: "and the Word was God.",
+    wrongOptions: [
+      "and the Word created all things.",
+      "and the Word brought light.",
+      "and the Word is life eternal.",
+    ],
+    fullText: "In the beginning was the Word, and the Word was with God, and the Word was God.",
+    reference: "John 1:1",
+  },
+];
+
+export function getRandomMCQVerse(): MCQVerse {
+  return MCQ_VERSES[Math.floor(Math.random() * MCQ_VERSES.length)];
+}
+
+export function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
