@@ -1,64 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useGameStore } from "@/store/gameStore";
 import { INDIAN_STATES } from "@/data/constants";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, User, MapPin, Sparkles, Keyboard, X } from "lucide-react";
-
-// --- (Keep existing SpeechRecognition TypeScript interfaces here) ---
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-  onresult: (event: SpeechRecognitionEvent) => void;
-  onerror: (event: SpeechRecognitionErrorEvent) => void;
-  onend: () => void;
-}
-
-interface SpeechRecognitionResultList {
-  length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-  length: number;
-  item(index: number): SpeechRecognitionAlternative;
-  [index: number]: SpeechRecognitionAlternative;
-  isFinal: boolean;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
-interface SpeechRecognitionEvent {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
-}
-
-interface SpeechRecognitionErrorEvent {
-  error: string;
-  message: string;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition: {
-      new (): SpeechRecognition;
-    };
-    webkitSpeechRecognition: {
-      new (): SpeechRecognition;
-    };
-  }
-}
-// --------------------------------------------------
+import { User, MapPin, Keyboard, X } from "lucide-react";
 
 export default function InputPage() {
   const router = useRouter();
@@ -66,138 +13,14 @@ export default function InputPage() {
   const [name, setName] = useState("");
   const [region, setRegion] = useState("");
   const [errors, setErrors] = useState<{ name?: string; region?: string }>({});
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeechSupported, setIsSpeechSupported] = useState(false);
-  const [inputMode, setInputMode] = useState<'voice' | 'keyboard'>('voice');
   const [showOnScreenKeyboard, setShowOnScreenKeyboard] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  // --- (Keep existing useEffect hooks for SpeechRecognition logic) ---
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      const supported = !!SpeechRecognition;
-      setIsSpeechSupported(supported);
-      // If voice not supported, default to keyboard mode
-      if (!supported) {
-        setInputMode('keyboard');
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isSpeechSupported && typeof window !== "undefined") {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = "en-US";
-
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = event.results[0][0].transcript.trim();
-        setName(transcript);
-        setErrors((prev) => {
-            if (prev.name) return { ...prev, name: undefined };
-            return prev;
-        });
-        setIsListening(false);
-      };
-
-      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        console.error("Speech recognition error:", event.error);
-        setIsListening(false);
-        if (event.error === "no-speech") {
-          setErrors((prev) => ({ ...prev, name: "No speech detected. Switching to keyboard..." }));
-          setTimeout(() => {
-            setInputMode('keyboard');
-            setShowOnScreenKeyboard(true);
-            setErrors((prev) => ({ ...prev, name: undefined }));
-          }, 2000);
-        } else if (event.error === "not-allowed") {
-          setErrors((prev) => ({ ...prev, name: "Microphone access denied. Using keyboard instead." }));
-          setInputMode('keyboard');
-          setShowOnScreenKeyboard(true);
-        } else {
-          // Other errors - fallback to keyboard
-          setInputMode('keyboard');
-          setShowOnScreenKeyboard(true);
-        }
-      };
-
-      recognition.onend = () => { setIsListening(false); };
-      recognitionRef.current = recognition;
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-        recognitionRef.current.abort();
-      }
-    };
-  }, [isSpeechSupported]);
-  // --------------------------------------------------
-
-  const handleVoiceInput = () => {
-    if (!isSpeechSupported) {
-      setErrors((prev) => ({ ...prev, name: "Voice input not supported. Using keyboard instead." }));
-      setInputMode('keyboard');
-      setShowOnScreenKeyboard(true);
-      return;
-    }
-
-    if (recognitionRef.current) {
-      if (isListening) {
-        recognitionRef.current.stop();
-        setIsListening(false);
-      } else {
-        try {
-          recognitionRef.current.start();
-          setIsListening(true);
-          setShowOnScreenKeyboard(false);
-          setErrors((prev) => {
-            if (prev.name) return { ...prev, name: undefined };
-            return prev;
-          });
-        } catch (error) {
-          console.error("Error starting speech recognition:", error);
-          setIsListening(false);
-          // Fallback to keyboard if voice fails
-          setInputMode('keyboard');
-          setShowOnScreenKeyboard(true);
-        }
-      }
-    }
-  };
-
-  // Auto-start voice input when field is focused (primary method)
   const handleInputFocus = () => {
-    if (inputMode === 'voice' && isSpeechSupported && !isListening) {
-      handleVoiceInput();
-    } else if (inputMode === 'keyboard' || !isSpeechSupported) {
-      setShowOnScreenKeyboard(true);
-    }
-  };
-
-  // Block physical keyboard input
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    // Only allow backspace and delete for editing
-    if (e.key === 'Backspace' || e.key === 'Delete') {
-      setName(prev => prev.slice(0, -1));
-    }
+    setShowOnScreenKeyboard(true);
   };
 
   const handleInputClick = () => {
-    if (inputMode === 'voice' && isSpeechSupported) {
-      if (!isListening) {
-        handleVoiceInput();
-      }
-    } else {
-      setShowOnScreenKeyboard(true);
-    }
+    setShowOnScreenKeyboard(true);
   };
 
   const handleKeyboardKeyPress = (key: string) => {
@@ -215,13 +38,8 @@ export default function InputPage() {
     }
   };
 
-  const switchToKeyboard = () => {
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-    setInputMode('keyboard');
-    setShowOnScreenKeyboard(true);
+  const handleKeyboardDone = () => {
+    setShowOnScreenKeyboard(false);
   };
 
   const handleStart = () => {
@@ -278,101 +96,34 @@ export default function InputPage() {
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 ml-1">
                 Player Name
               </label>
-              <div className={`relative flex items-center group rounded-2xl transition-all duration-300 ${isListening ? 'ring-2 ring-red-500/50' : inputMode === 'voice' ? 'ring-2 ring-blue-500/30' : 'ring-2 ring-purple-500/30'}`}>
+              <div className="relative flex items-center group rounded-2xl transition-all duration-300 ring-2 ring-purple-500/30">
                 <User className="absolute left-4 h-5 w-5 text-blue-400 transition-colors" />
                 <input
-                  ref={inputRef}
                   id="name"
                   type="text"
                   value={name}
                   readOnly
                   onFocus={handleInputFocus}
                   onClick={handleInputClick}
-                  onKeyDown={handleKeyDown}
-                  className="w-full pl-12 pr-16 py-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:bg-white/10 transition-all outline-none text-lg font-medium cursor-pointer"
-                  placeholder={inputMode === 'voice' && isSpeechSupported ? "Tap to start voice input..." : "Tap to open on-screen keyboard..."}
+                  className="w-full pl-12 pr-12 py-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:bg-white/10 transition-all outline-none text-lg font-medium cursor-pointer"
+                  placeholder="Tap to open keyboard..."
                   maxLength={50}
                 />
-                
-                {/* Input Method Indicator */}
-                <div className="absolute right-2 flex items-center gap-2">
-                  {inputMode === 'voice' && isSpeechSupported && (
-                    <button
-                      type="button"
-                      onClick={handleVoiceInput}
-                      className={`p-3 rounded-xl transition-all duration-300 backdrop-blur-md
-                        ${isListening 
-                          ? "bg-red-500/80 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]" 
-                          : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-white"
-                        }`}
-                      title={isListening ? "Stop recording" : "Start voice input"}
-                    >
-                     <AnimatePresence mode="wait">
-                          {isListening ? (
-                              <motion.div key="mic-off" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                                  <MicOff className="h-5 w-5" />
-                              </motion.div>
-                          ) : (
-                              <motion.div key="mic-on" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                                  <Mic className="h-5 w-5" />
-                              </motion.div>
-                          )}
-                      </AnimatePresence>
-                    </button>
-                  )}
-                  {inputMode === 'keyboard' && (
-                    <button
-                      type="button"
-                      onClick={() => setShowOnScreenKeyboard(true)}
-                      className="p-3 rounded-xl bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 hover:text-white transition-all duration-300 backdrop-blur-md"
-                      title="Open keyboard"
-                    >
-                      <Keyboard className="h-5 w-5" />
-                    </button>
-                  )}
-                </div>
+
+                {/* Keyboard Indicator Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowOnScreenKeyboard(true)}
+                  className="absolute right-2 p-3 rounded-xl bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 hover:text-white transition-all duration-300 backdrop-blur-md"
+                  title="Open keyboard"
+                >
+                  <Keyboard className="h-5 w-5" />
+                </button>
               </div>
 
-              {/* Error / Listening Status Messages */}
+              {/* Error Messages */}
               <AnimatePresence mode="wait">
-                {isListening ? (
-                  <motion.div key="listening" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex items-center justify-between">
-                    <motion.p className="text-sm text-red-400 font-medium flex items-center gap-2 ml-1">
-                       <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                       </span>
-                       Listening... Speak clearly
-                    </motion.p>
-                    <button
-                      type="button"
-                      onClick={switchToKeyboard}
-                      className="text-xs text-purple-400 hover:text-purple-300 transition-colors underline"
-                    >
-                      Use keyboard instead
-                    </button>
-                  </motion.div>
-                ) : inputMode === 'keyboard' ? (
-                  <motion.div key="keyboard-mode" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex items-center justify-between">
-                    <motion.p className="text-sm text-purple-400 font-medium flex items-center gap-2 ml-1">
-                      <Keyboard className="h-4 w-4" />
-                      Keyboard mode active
-                    </motion.p>
-                    {isSpeechSupported && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setInputMode('voice');
-                          setShowOnScreenKeyboard(false);
-                          handleVoiceInput();
-                        }}
-                        className="text-xs text-blue-400 hover:text-blue-300 transition-colors underline"
-                      >
-                        Use voice instead
-                      </button>
-                    )}
-                  </motion.div>
-                ) : errors.name ? (
+                {errors.name ? (
                   <motion.p key="error" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-red-400 ml-1">
                     {errors.name}
                   </motion.p>
@@ -477,7 +228,11 @@ export default function InputPage() {
                     <X className="h-5 w-5 text-gray-400" />
                   </button>
                 </div>
-                <OnScreenKeyboard onKeyPress={handleKeyboardKeyPress} />
+                <OnScreenKeyboard
+                  onKeyPress={handleKeyboardKeyPress}
+                  currentText={name}
+                  onDone={handleKeyboardDone}
+                />
               </div>
             </motion.div>
           </>
@@ -488,7 +243,15 @@ export default function InputPage() {
 }
 
 // On-Screen Keyboard Component
-function OnScreenKeyboard({ onKeyPress }: { onKeyPress: (key: string) => void }) {
+function OnScreenKeyboard({
+  onKeyPress,
+  currentText,
+  onDone
+}: {
+  onKeyPress: (key: string) => void;
+  currentText: string;
+  onDone: () => void;
+}) {
   const rows = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -496,46 +259,73 @@ function OnScreenKeyboard({ onKeyPress }: { onKeyPress: (key: string) => void })
   ];
 
   return (
-    <div className="space-y-2">
-      {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex justify-center gap-2">
-          {row.map((key) => (
-            <motion.button
-              key={key}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onKeyPress(key.toLowerCase())}
-              className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-lg hover:bg-white/10 hover:border-white/20 transition-all touch-target"
-            >
-              {key}
-            </motion.button>
-          ))}
+    <div className="space-y-4">
+      {/* Text Preview Area */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
+      >
+        <p className="text-xs text-gray-400 mb-2">Current Input:</p>
+        <p className="text-xl font-bold text-white min-h-[2rem] break-words">
+          {currentText || <span className="text-gray-500">Start typing...</span>}
+        </p>
+      </motion.div>
+
+      {/* Keyboard Keys */}
+      <div className="space-y-2">
+        {rows.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-center gap-2">
+            {row.map((key) => (
+              <motion.button
+                key={key}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onKeyPress(key.toLowerCase())}
+                className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-lg hover:bg-white/10 hover:border-white/20 transition-all touch-target"
+              >
+                {key}
+              </motion.button>
+            ))}
+          </div>
+        ))}
+
+        {/* Control Buttons */}
+        <div className="flex justify-center gap-2 mt-2">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onKeyPress('space')}
+            className="flex-1 max-w-md py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 hover:border-white/20 transition-all touch-target"
+          >
+            Space
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onKeyPress('backspace')}
+            className="px-6 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold hover:bg-red-500/20 hover:text-red-300 transition-all touch-target"
+          >
+            ⌫
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onKeyPress('clear')}
+            className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 hover:border-white/20 transition-all touch-target"
+          >
+            Clear
+          </motion.button>
         </div>
-      ))}
-      <div className="flex justify-center gap-2 mt-2">
+
+        {/* Done Button */}
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onKeyPress('space')}
-          className="flex-1 max-w-md py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 hover:border-white/20 transition-all touch-target"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onDone}
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold text-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all touch-target mt-2"
         >
-          Space
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onKeyPress('backspace')}
-          className="px-6 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold hover:bg-red-500/20 hover:text-red-300 transition-all touch-target"
-        >
-          ⌫
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onKeyPress('clear')}
-          className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 hover:border-white/20 transition-all touch-target"
-        >
-          Clear
+          Done
         </motion.button>
       </div>
     </div>
